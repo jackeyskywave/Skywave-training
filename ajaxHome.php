@@ -5,19 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PHP CRUD Operations Using AJAX</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" crossorigin="anonymous">
+     
 </head>
 
 <body>
-    <!-- <div class="container my-3">
-
-        <button type="button" class="btn btn-dark my-3" data-toggle="modal" data-target="#completeModal">
-            Add New User
-        </button>
-        <div id="displayDataTable">
-        </div>
-    </div> -->
 
     <!-- Add Modal -->
     <div class="modal fade" id="completeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -59,9 +53,10 @@
             </div>
         </div>
     </div>
-    <div id="msg" class="text-black text-center p-1 rounded">
+
+    <!-- <div id="msg" class="text-black text-center p-1 rounded">
         &nbsp;
-    </div>
+    </div> -->
 
     <!-- View Modal -->
     <div class="modal fade" id="view_data" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -91,7 +86,7 @@
                     </label>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -134,8 +129,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary update_data">Update Data</button>
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger update_data">Update Data</button>
                 </div>
             </div>
         </div>
@@ -152,7 +147,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h1>Are You sure you want to delete this data?</h1>
+                    <h4>Are you sure you want to delete this data??</h4>
                     <input type="hidden" class="form-control delete_id">
                 </div>
                 <div class="modal-footer">
@@ -162,7 +157,8 @@
             </div>
         </div>
     </div>
-   
+
+    <!--Display Table-->
     <div class="py-5">
         <div class="container">
             <div class="row">
@@ -176,7 +172,7 @@
                                 </button>
                             </h1>
                             <div class="card-body">
-                                <table class="table table-striped">
+                                <table class="table table-striped" id="data_table">
                                     <thead class="thead-dark">
                                         <tr>
                                             <th scope="col">Sr No.</th>
@@ -188,9 +184,7 @@
                                             <th scope="col">Delete</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="table-data">
 
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -199,22 +193,22 @@
             </div>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 
     <script>
-        //Add new user
+        //Add new user 
         $(document).ready(function() {
             getData();
 
             //view
-            $(document).on('click', ".view_data", function() {
-                // alert("hello");
-                var id = $(this).closest('tr').find('.id').text();
-                //  alert(id);
+            $('#data_table').on('click', ".view_data", function() {
+                var id = $(this).data('id');
                 $.ajax({
                     type: "POST",
                     url: 'ajax_insert.php',
@@ -223,28 +217,21 @@
                         'id': id,
                     },
                     success: function(response) {
-                        //    console.log(response);
                         $.each(response, function(key, value) {
-                            // console.log(value['name']);
                             $('.view_id').text(value['id']);
                             $('.view_name').text(value['name']);
                             $('.view_email').text(value['email']);
                             $('.view_mobile').text(value['mobile']);
                             $('.view_place').text(value['place']);
                         });
-
                         $('#view_data').modal('show');
-
                     }
                 });
-
             });
 
             //edit
-            $(document).on('click', ".edit_data", function() {
-                // alert("hello");
-                var id = $(this).closest('tr').find('.id').text();
-                //  alert(id);
+            $('#data_table').on('click', ".edit_data", function() {
+                var id = $(this).data('id');
                 $.ajax({
                     type: "POST",
                     url: 'ajax_insert.php',
@@ -253,101 +240,60 @@
                         'id': id,
                     },
                     success: function(response) {
-                        //    console.log(response);
                         $.each(response, function(key, value) {
-                            // console.log(value['name']);
                             $('.id').val(value['id']);
                             $('.edit_name').val(value['name']);
                             $('.edit_email').val(value['email']);
                             $('.edit_mobile').val(value['mobile']);
                             $('.edit_place').val(value['place']);
                         });
-
                         $('#edit_data').modal('show');
-
                     }
                 });
-
             });
 
-            //delete
-            // $(document).on('click', ".delete_data", function() {
-            //     // alert("hello");
-            //     var id = $(this).closest('tr').find('.id').text();
-            //     //  alert(id);
-            //     $.ajax({
-            //         type: "POST",
-            //         url: 'ajax_insert.php',
-            //         data: {
-            //             'click_delete_btn': true,
-            //             'id': id,
-            //         },
-            //         success: function(response) {
-            //             //    console.log(response);
-            //             $('.message-show').append('\
-            //         <div class="alert alert-success alert-dismissible fade show" role="alert">\
-            //         <strong>Success!</strong> ' + response + '\
-            //         <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-            //         <span aria-hidden="true">&times;</span>\
-            //         </button>\
-            //         </div>');
-            //             $('.table-data').html('');
-            //             getData();
-            //         }
-            //     });
-
-            // });
-
-            $(document).on('click', ".confirm_delete_data", function() {
-                // alert("hello");
-                var id = $(this).closest('tr').find('.id').text();
+            //Confirm delete 
+            $('#data_table').on('click', ".confirm_delete_data", function() {
+                var id = $(this).data('id');
                 $('.delete_id').val(id);
                 $('#delete_data').modal('show');
-                
-                //  alert('hii');
-                $('.confirm_delete_data').click(function(e){
+
+                $('.confirm_delete_data').click(function(e) {
                     e.preventDefault();
-                    // alert("You clicked yes.");
-                   var delete_id= $('.delete_id').val();
-                    // alert(delete_id);
+                    var delete_id = $('.delete_id').val();
                     $.ajax({
-                    type: "POST",
-                    url: 'ajax_insert.php',
-                    data: {
-                        'click_confirm_delete_btn': true,
-                        'delete_id': delete_id,
-                    },
-                    success: function(response) {
-                        //    console.log(response);
-                        $('.message-show').append('\
+                        type: "POST",
+                        url: 'ajax_insert.php',
+                        data: {
+                            'click_confirm_delete_btn': true,
+                            'delete_id': delete_id,
+                        },
+                        success: function(response) {
+                            $('.message-show').append('\
                     <div class="alert alert-success alert-dismissible fade show" role="alert">\
                     <strong>Success!</strong> ' + response + '\
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
                     <span aria-hidden="true">&times;</span>\
                     </button>\
                     </div>');
-                    $('#delete_data').modal('hide');
-                        $('.table-data').html('');
-                        getData();
-                    }
-                });
+                            $('#delete_data').modal('hide');
+                            $('.table-data').html('');
+                            getData();
+                        }
+                    });
                 });
             });
-           
 
             //update
             $('.update_data').click(function(e) {
                 e.preventDefault();
-                //   console.log('hello');
                 var id = $('.id').val();
                 var name = $('.edit_name').val();
                 var email = $('.edit_email').val();
                 var mobile = $('.edit_mobile').val();
                 var place = $('.edit_place').val();
-                // console.log(name);
                 // function preg_match() {}
                 if (name == "" & email == "" & mobile == "" & place == "") {
-                    // console.log("please fill all fields.");
                     $('.error-message').append('\
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">\
                     <strong>Error!</strong> Please fill all fileds.\
@@ -422,9 +368,7 @@
                     </div>');
                             $('.table-data').html('');
                             getData();
-
                         }
-
                     });
                 }
             });
@@ -440,7 +384,6 @@
 
                 // function preg_match() {}
                 if (name == "" & email == "" & mobile == "" & place == "") {
-                    // console.log("please fill all fields.");
                     $('.error-message').append('\
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">\
                     <strong>Error!</strong> Please fill all fileds.\
@@ -503,7 +446,6 @@
                             'place': place
                         },
                         success: function(response) {
-                            // console.log(response);
                             $('#completeModal').modal('hide');
                             $('.message-show').append('\
                     <div class="alert alert-success alert-dismissible fade show" role="alert">\
@@ -514,9 +456,7 @@
                     </div>');
                             $('.table-data').html('');
                             getData();
-
                         }
-
                     });
                 }
             });
@@ -529,24 +469,55 @@
                 url: 'ajax_display.php',
                 success: function(resopnse) {
                     $.each(resopnse, function(key, value) {
-                        $('.table-data').append(' <tr>\
-                                            <td class="id">' + value['id'] + '</th>\
-                                            <td>' + value['name'] + '</td>\
-                                            <td>' + value['email'] + '</td>\
-                                            <td>' + value['mobile'] + '</td>\
-                                            <td>' + value['place'] + '</td>\
-                                            <td><a href="#" class="btn btn-warning btn-sm view_data">View</a>\
-                                                <a href="#" class="btn btn-success btn-sm edit_data">Edit</a>\
-                                            </td>\
-                                            <td>\
-                                            <a href="#" class="btn btn-danger btn-sm confirm_delete_data">Confirm Delete</a>\
-                                            </td>\
-                                        </tr>');
+                        $('#data_table').DataTable({
+                            "bDestroy": true,
+                            "ajax": {
+                                "url": "ajax_display.php",
+                                "type": "POST",
+                                "dataSrc": ""
+                            },
+                            "columns": [{
+                                    "data": "id"
+                                }, {
+                                    "data": "name"
+                                }, {
+                                    "data": "email"
+                                }, {
+                                    "data": "mobile"
+                                }, {
+                                    "data": "place"
+                                }, {
+                                    "data": null,
+                                    "render": function(data, type, row, meta) {
+                                        return '<a href="#" class="btn btn-warning btn-sm view_data"  data-id="' + data.id + '">View</a>\
+                                    <a href="#" class="btn btn-success btn-sm edit_data" data-id="' + data.id + '">Edit</a>';
+                                    }
+                                },
+                                {
+                                    "data": null,
+                                    "render": function(data, type, row, meta) {
+                                        return ' <a href="#" class="btn btn-danger btn-sm confirm_delete_data" data-id="' + data.id + '">Confirm Delete</a>';
+                                    }
+                                }
+                            ]
+                        });
+                        // $('#data_table').append(' <tr>\
+                        //                     <td class="id">' + value['id'] + '</th>\
+                        //                     <td>' + value['name'] + '</td>\
+                        //                     <td>' + value['email'] + '</td>\
+                        //                     <td>' + value['mobile'] + '</td>\
+                        //                     <td>' + value['place'] + '</td>\
+                        //                     <td><a href="#" class="btn btn-warning btn-sm view_data">View</a>\
+                        //                         <a href="#" class="btn btn-success btn-sm edit_data">Edit</a>\
+                        //                     </td>\
+                        //                     <td>\
+                        //                     <a href="#" class="btn btn-danger btn-sm confirm_delete_data">Confirm Delete</a>\
+                        //                     </td>\
+                        //                 </tr>');
                     });
                 }
             });
         }
-
     </script>
 </body>
 

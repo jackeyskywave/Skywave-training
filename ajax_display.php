@@ -4,13 +4,13 @@ include "conn.php";
 
 $sql = "SELECT * FROM `ajax`";
 $query = mysqli_query($conn, $sql);
-$result=[];
+$result = array();
 if (mysqli_num_rows($query) > 0) {
-  foreach ($query as $row) {
-    array_push($result,$row);
+  while ($row = mysqli_fetch_assoc($query)) {
+    $data[] = $row;
   }
-  header('content-type:application/json');
-  echo json_encode($result);
+  header('Content-Type: application/json');
+  echo json_encode($data);
 } else {
   echo $result = "No record found.";
 }
