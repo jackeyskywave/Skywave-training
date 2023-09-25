@@ -24,10 +24,14 @@ class customerController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif',
             'password' => 'required|confirmed',
             'password_confirmation' => 'required',
+            'address' => 'required',
+            'country' => 'required',
             'gender' => 'required',
-            'dob' => 'required'
+            'dob' => 'required',
+            'hobby' => 'required'
         ]);
 
         //Insert Query
@@ -64,6 +68,10 @@ class customerController extends Controller
     {
         $customer = Customer::find($id);
         if (!is_null($customer)) {
+            $image_path = public_path('storage/images/'.$customer->image);
+            if(file_exists($image_path)){
+                unlink($image_path);
+            }
             $customer->delete();
         }
 
@@ -85,7 +93,20 @@ class customerController extends Controller
 
     public function update($id, Request $request)
     {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            // 'image' => 'required|image|mimes:jpeg,png,jpg,gif',
+            'password' => 'required|confirmed',
+            'password_confirmation' => 'required',
+            'address' => 'required',
+            'country' => 'required',
+            'gender' => 'required',
+            'dob' => 'required',
+            'hobby' => 'required'
+        ]);
         $customer = Customer::find($id);
+
         $customer->name = $request['name'];
         $customer->email = $request['email'];
 

@@ -13,12 +13,12 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css"
         integrity="sha512-mR/b5Y7FRsKqrYZou7uysnOdCIJib/7r5QeJMFvLNHNhtye3xJp1TdJVPLtetkukFn227nKpXD9OjUc09lx97Q=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <style>
-            label{
-                color: rgb(31, 27, 27);
-                /* font-weight: bold; */
-            }
-        </style>
+    <style>
+        label {
+            color: rgb(31, 27, 27);
+            /* font-weight: bold; */
+        }
+    </style>
 
     <title>Customer Registration Form</title>
 </head>
@@ -71,7 +71,8 @@
                                         <div class="form-outline">
                                             <label class="form-label" for="name">Name:</label>
                                             <input type="text" id="name" name="name"
-                                                class="form-control form-control-lg" value="{{ $customer->name }}" />
+                                                class="form-control form-control-lg"
+                                                value="{{ old('name', $customer->name) }}" />
                                             <span class="text-danger">
                                                 @error('name')
                                                     {{ $message }}
@@ -84,7 +85,8 @@
                                         <div class="form-outline">
                                             <label class="form-label" for="email">Email:</label>
                                             <input type="text" id="email" name="email"
-                                                class="form-control form-control-lg" value="{{ $customer->email }}" />
+                                                class="form-control form-control-lg"
+                                                value="{{ old('email', $customer->email) }}" />
                                             <span class="text-danger">
                                                 @error('email')
                                                     {{ $message }}
@@ -96,10 +98,26 @@
                                 </div>
                                 <div class="form-outline">
                                     <label class="form-label" for="image">Profile Picture:</label>
-                                    <input type="file" name="image" class="form-control form-control-lg" id="formFileLg">
+                                    @if ($customer->image)
+                                        <input type="file" name="image" class="form-control form-control-lg">
+                                        <br>
+                                        <img src="{{ asset('storage/images/' . $customer->image) }}" alt="Image"
+                                            width="100px" height="100px">
+                                    @else
+                                        <input type="file" name="image" class="form-control form-control-lg"
+                                            id="formFileLg" src="{{ asset('storage/images/' . $customer->image) }}"
+                                            width="100px" height="100px">
+                                    @endif
+
+
+                                    <span class="text-danger">
+                                        @error('image')
+                                            {{ $message }}
+                                        @enderror
+                                    </span>
                                     <br>
-                                    <img src="{{asset('storage/images/'.$customer->image)}}" width="100px" height="100px"  alt="Image">
-                                    
+                                    {{-- <img src="{{asset('storage/images/'.$customer->image)}}" width="100px" height="100px"> --}}
+
                                 </div>
                                 <br>
                                 <div class="row">
@@ -121,8 +139,8 @@
                                     <div class="col-md-6 mb-4">
 
                                         <div class="form-outline">
-                                            <label class="form-label"
-                                                for="password_confirmation">Confirm Password:</label>
+                                            <label class="form-label" for="password_confirmation">Confirm
+                                                Password:</label>
                                             <input type="password" id="password_confirmation"
                                                 name="password_confirmation" class="form-control form-control-lg"
                                                 value="{{ $customer->password_confirmation }}" />
@@ -138,24 +156,96 @@
 
                                 <div class="form-outline">
                                     <label class="form-label" for="address">Address:</label>
-                                    <textarea name="address" id="address" cols="30" rows="2" class="form-control form-control-lg">{{ $customer->address }}</textarea>
+                                    <textarea name="address" id="address" cols="30" rows="2" class="form-control form-control-lg">{{ old('address', $customer->address) }}</textarea>
+                                    <span class="text-danger">
+                                        @error('address')
+                                            {{ $message }}
+                                        @enderror
+                                    </span>
                                 </div>
                                 <br>
                                 <div class="form-outline">
                                     <label class="form-label" for="country">Country:</label>
-                                    <select name="country[]" class="selectpicker form-control form-control-lg" multiple
-                                        aria-label="size 3 select example">
-                                        <option value="Russia" {{ in_array('Russia', explode(',', $customer->country)) ? 'selected' : ''}}>Russia</option>
-                                        <option value="Canada" {{ in_array('Canada', explode(',', $customer->country)) ? 'selected' : ''}}>Canada</option>
-                                        <option value="China" {{ in_array('China', explode(',', $customer->country)) ? 'selected' : ''}}>China</option>
-                                        <option value="United States" {{ in_array('United States', explode(',', $customer->country)) ? 'selected' : ''}}>United States</option>
-                                        <option value="Brazil" {{ in_array('Brazil', explode(',', $customer->country)) ? 'selected' : ''}}>Brazil</option>
-                                        <option value="Australia" {{ in_array('Australia', explode(',', $customer->country)) ? 'selected' : ''}}>Australia</option>
-                                        <option value="India" {{ in_array('India', explode(',', $customer->country)) ? 'selected' : ''}}>India</option>
-                                        <option value="Argentina" {{ in_array('Argentina', explode(',', $customer->country)) ? 'selected' : ''}}>Argentina</option>
-                                        <option value="Kazakhstan" {{ in_array('Kazakhstan', explode(',', $customer->country)) ? 'selected' : ''}}>Kazakhstan</option>
-                                        <option value="Algeria" {{ in_array('Algeria', explode(',', $customer->country)) ? 'selected' : ''}}>Algeria</option>
+                                    <select name="country[]" class="selectpicker form-control form-control-lg"
+                                        multiple aria-label="size 3 select example"> 
+
+                                        <option value="Russia"
+                                        @if (old('country'))
+                                        {{ (is_array(old('country')) and in_array('Russia', old('country'))) ? ' selected' : '' }}
+                                        @else
+                                        {{ in_array('Russia', explode(',', $customer->country)) ? 'selected' : '' }}
+                                        @endif>
+                                            Russia</option>
+                                        <option value="Canada"
+                                        @if (old('country'))
+                                        {{ (is_array(old('country')) and in_array('Canada', old('country'))) ? ' selected' : '' }}
+                                        @else
+                                        {{ in_array('Canada', explode(',', $customer->country)) ? 'selected' : '' }}
+                                        @endif>
+                                            Canada</option>
+                                        <option value="China"
+                                        @if (old('country'))
+                                        {{ (is_array(old('country')) and in_array('China', old('country'))) ? ' selected' : '' }}
+                                        @else
+                                        {{ in_array('China', explode(',', $customer->country)) ? 'selected' : '' }}
+                                        @endif>
+                                            China</option>
+                                        <option value="United States"
+                                        @if (old('country'))
+                                        {{ (is_array(old('country')) and in_array('United States', old('country'))) ? ' selected' : '' }}
+                                        @else
+                                        {{ in_array('United States', explode(',', $customer->country)) ? 'selected' : '' }}
+                                        @endif>
+                                            United States</option>
+                                        <option value="Brazil"
+                                        @if (old('country'))
+                                        {{ (is_array(old('country')) and in_array('Brazil', old('country'))) ? ' selected' : '' }}
+                                        @else
+                                        {{ in_array('Brazil', explode(',', $customer->country)) ? 'selected' : '' }}
+                                        @endif>
+                                            Brazil</option>
+                                        <option value="Australia"
+                                        @if (old('country'))
+                                        {{ (is_array(old('country')) and in_array('Australia', old('country'))) ? ' selected' : '' }}
+                                        @else
+                                        {{ in_array('Australia', explode(',', $customer->country)) ? 'selected' : '' }}
+                                        @endif>
+                                            Australia</option>
+                                        <option value="India"
+                                        @if (old('country'))
+                                        {{ (is_array(old('country')) and in_array('India', old('country'))) ? ' selected' : '' }}
+                                        @else
+                                        {{ in_array('India', explode(',', $customer->country)) ? 'selected' : '' }}
+                                        @endif>
+                                            India</option>
+                                        <option value="Argentina"
+                                        @if (old('country'))
+                                        {{ (is_array(old('country')) and in_array('Argentina', old('country'))) ? ' selected' : '' }}
+                                        @else
+                                        {{ in_array('Argentina', explode(',', $customer->country)) ? 'selected' : '' }}
+                                        @endif>
+                                            Argentina</option>
+                                        <option value="Kazakhstan"
+                                        @if (old('country'))
+                                        {{ (is_array(old('country')) and in_array('Kazakhstan', old('country'))) ? ' selected' : '' }}
+                                        @else
+                                        {{ in_array('Kazakhstan', explode(',', $customer->country)) ? 'selected' : '' }}
+                                        @endif>
+                                            Kazakhstan</option>
+                                        <option value="Algeria"
+                                        @if (old('country'))
+                                        {{ (is_array(old('country')) and in_array('Algeria', old('country'))) ? ' selected' : '' }}
+                                        @else
+                                        {{ in_array('Algeria', explode(',', $customer->country)) ? 'selected' : '' }}
+                                        @endif>
+                                            Algeria</option>
                                     </select>
+                                    <span class="text-danger">
+                                        @error('country')
+                                            {{ $message }}
+                                        @enderror
+                                    </span>
+
                                 </div>
                                 <br>
                                 <div class="row">
@@ -164,35 +254,38 @@
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="gender"
                                                 id="femaleGender" value="F"
-                                                {{ $customer->gender == 'F' ? 'checked' : '' }} />
+                                                {{ old('gender', $customer->gender) == 'F' ? 'checked' : '' }} />
                                             <label class="form-check-label" for="femaleGender">Female</label>
                                         </div>
 
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="gender"
                                                 id="maleGender" value="M"
-                                                {{ $customer->gender == 'M' ? 'checked' : '' }} />
+                                                {{ old('gender', $customer->gender) == 'M' ? 'checked' : '' }} />
                                             <label class="form-check-label" for="maleGender">Male</label>
                                         </div>
 
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="gender"
                                                 id="otherGender" value="O"
-                                                {{ $customer->gender == 'O' ? 'checked' : '' }} />
+                                                {{ old('gender', $customer->gender) == 'O' ? 'checked' : '' }} />
                                             <label class="form-check-label" for="otherGender">Other</label>
                                         </div>
+                                        <br>
                                         <span class="text-danger">
                                             @error('gender')
                                                 {{ $message }}
                                             @enderror
                                         </span>
                                     </div>
+
                                     <div class="col-md-6 mb-4 d-flex align-items-center">
 
                                         <div class="form-outline datepicker w-100">
                                             <label for="birthdayDate" class="form-label">Birthday</label>
                                             <input type="date" class="form-control form-control-lg"
-                                                id="birthdayDate" name="dob" value="{{ $customer->dob }}" />
+                                                id="birthdayDate" name="dob"
+                                                value="{{ old('dob', $customer->dob) }}" />
                                             <span class="text-danger">
                                                 @error('dob')
                                                     {{ $message }}
@@ -205,29 +298,55 @@
                                 <div class="form-outline">
                                     <label class="form-label" for="name">Hobbies:</label>
                                     <div class="custom-control  checkbox-lg custom-checkbox custom-control-inline">
-                                        <input type="checkbox" class="custom-control-input" id="defaultInline1"
+                                        <input type="checkbox" class="custom-control-input" 
                                             name="hobby[]" value="Dancing"
-                                            {{ in_array('Dancing', explode(',', $customer->hobby)) ? 'checked' : '' }}>
-                                        <label class="custom-control-label" for="defaultInline1" style="color: black">Dancing</label>
+                                            @if (old('hobby'))
+                                            {{ (is_array(old('hobby')) and in_array('Dancing', old('hobby'))) ? ' checked' : '' }}
+                                            @else
+                                            {{ in_array('Dancing', explode(',', $customer->hobby)) ? 'checked' : '' }}
+                                            @endif
+                                            >
+                                        <label class="custom-control-label" for="defaultInline1"
+                                            style="color: black">Dancing</label>
                                     </div>&nbsp;&nbsp;&nbsp;
                                     <div class="custom-control  custom-checkbox custom-control-inline">
-                                        <input type="checkbox" class="custom-control-input" id="defaultInline1"
+                                        <input type="checkbox" class="custom-control-input" 
                                             name="hobby[]" value="Singing"
-                                            {{ in_array('Singing', explode(',', $customer->hobby)) ? 'checked' : '' }}>
-                                        <label class="custom-control-label" for="defaultInline1" style="color: black">Singing</label>
+                                            @if (old('hobby'))
+                                            {{ (is_array(old('hobby')) and in_array('Singing', old('hobby'))) ? ' checked' : '' }}
+                                            @else
+                                            {{ in_array('Singing', explode(',', $customer->hobby)) ? 'checked' : '' }}
+                                            @endif>
+                                        <label class="custom-control-label" for="defaultInline1"
+                                            style="color: black">Singing</label>
                                     </div>&nbsp;&nbsp;&nbsp;
                                     <div class="custom-control  custom-checkbox custom-control-inline">
-                                        <input type="checkbox" class="custom-control-input" id="defaultInline1"
+                                        <input type="checkbox" class="custom-control-input" 
                                             name="hobby[]" value="Drawing"
-                                            {{ in_array('Drawing', explode(',', $customer->hobby)) ? 'checked' : '' }}>
-                                        <label class="custom-control-label" for="defaultInline1" style="color: black">Drawing</label>
+                                            @if (old('hobby'))
+                                            {{ (is_array(old('hobby')) and in_array('Drawing', old('hobby'))) ? ' checked' : '' }}
+                                            @else
+                                            {{ in_array('Drawing', explode(',', $customer->hobby)) ? 'checked' : '' }}
+                                            @endif>
+                                        <label class="custom-control-label" for="defaultInline1"
+                                            style="color: black">Drawing</label>
                                     </div>&nbsp;&nbsp;&nbsp;
                                     <div class="custom-control  custom-checkbox custom-control-inline">
-                                        <input type="checkbox" class="custom-control-input" id="defaultInline1"
+                                        <input type="checkbox" class="custom-control-input" 
                                             name="hobby[]" value="Sketching"
-                                            {{ in_array('Sketching', explode(',', $customer->hobby)) ? 'checked' : '' }}>
-                                        <label class="custom-control-label" for="defaultInline1" style="color: black">Sketching</label>
+                                            @if (old('hobby'))
+                                            {{ (is_array(old('hobby')) and in_array('Sketching', old('hobby'))) ? ' checked' : '' }}
+                                            @else
+                                            {{ in_array('Sketching', explode(',', $customer->hobby)) ? 'checked' : '' }}
+                                            @endif>
+                                        <label class="custom-control-label" for="defaultInline1"
+                                            style="color: black">Sketching</label>
                                     </div>
+                                    <span class="text-danger">
+                                        @error('hobby')
+                                            {{ $message }}
+                                        @enderror
+                                    </span>
                                 </div>
                                 <br>
                                 <div>
@@ -241,7 +360,7 @@
             </div>
         </div>
     </section>
-    
+
 
     <!-- Optional JavaScript; choose one of the two! -->
 

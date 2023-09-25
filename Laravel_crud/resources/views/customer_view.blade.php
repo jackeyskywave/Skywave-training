@@ -94,7 +94,7 @@
                 <th>Country</th>
                 <th>Birth Date</th>
                 <th>Hobbies</th>
-                <th>Status</th>
+                {{-- <th>Status</th> --}}
                 <th>Action</th>
             </thead>
             <tbody>
@@ -119,17 +119,17 @@
                         </td>
                         <td>{{ $customer->address }}</td>
                         <td>{{ $customer->country }}</td>
-                        <td>{{ $customer->dob }}</td>
+                        <td>{{ \Carbon\Carbon::createFromTimestamp(strtotime($customer->dob))->format('d-m-Y')}}</td>
                         <td>
                             {{ $customer->hobby }}
                         </td>
-                        <td>
+                        {{-- <td>
                             @if ($customer->status == '1')
                                 <span class="badge bg-success">Active</span>
                             @else
                                 <span class="badge bg-danger">Inactive</span>
                             @endif
-                        </td>
+                        </td> --}}
                         <td>
                             <a href="{{ route('customer.delete', ['id' => $customer->customer_id]) }}">
                                 <button class="btn btn-danger">Delete</button>
