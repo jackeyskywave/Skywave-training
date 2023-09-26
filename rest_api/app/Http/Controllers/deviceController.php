@@ -79,8 +79,10 @@ class deviceController extends Controller
         $company = Company::where("id", 1)->first();
         $dateformate = ['','M-d-y', 'd-m-y', 'y-d-m'];
         $formate = $dateformate[$company->date];
-        $posts->map(function ($post) use ($formate) {
+        $image = $company->image;
+        $posts->map(function ($post) use ($formate,$image) {
             $post->date = date($formate, strtotime($post->date)); 
+            $post->image = $image;
         });
 
         // $posts = Post::all();

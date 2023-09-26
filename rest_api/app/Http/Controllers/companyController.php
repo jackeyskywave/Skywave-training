@@ -12,7 +12,7 @@ class companyController extends Controller
     {  
         $company = Company::find(1);
         $company->date = $request->date;
-        $company->image = $request->file('image');
+        $company->image = $request->file('image')->store('apiDocs');
         $result = $company->save();
         if ($result) {
             return "Data formate update.";
